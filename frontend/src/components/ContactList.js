@@ -4,6 +4,20 @@ import EditContact from './EditContact';
 import ViewContact from './ViewContact';
 import Swal from 'sweetalert2';
 
+// 1. API Base URL set kar diya gaya hai
+const API_BASE_URL = "https://contact-manager-api-production-0aa6.up.railway.app";
+
+// 2. CSV Formula Injection se bachne ke liye helper function
+const sanitizeForCSV = (value) => {
+    if (!value) return "";
+    const strValue = String(value);
+    // Agar text =, +, -, ya @ se shuru ho, toh uske aage ' laga dein
+    if (/^[=+\-@]/.test(strValue)) {
+        return "'" + strValue;
+    }
+    return strValue;
+};
+
 const ContactList = () => {
     const [contacts, setContacts] = useState([]);
     const [editingContact, setEditingContact] = useState(null);
@@ -20,7 +34,6 @@ const ContactList = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps 
     }, [currentPage, pageSize, searchTerm]);
 
-    // Helper function to get and decode auth data safely
     const getAuthData = () => {
         const rawToken = localStorage.getItem("jwtToken");
         const rawUserId = localStorage.getItem("userId");
@@ -39,7 +52,8 @@ const ContactList = () => {
                 return;
             }
 
-            const result = await axios.get(`https://contact-manager-api-production-0aa6.up.railway.app/users/${currentUserId}/contacts`, {
+            // URL ko API_BASE_URL se replace kar diya
+            const result = await axios.get(`${API_BASE_URL}/users/${currentUserId}/contacts`, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 },
@@ -78,7 +92,8 @@ const ContactList = () => {
                     throw new TypeError("Invalid ID for deletion");
                 }
 
-                await axios.delete(`https://contact-manager-api-production-0aa6.up.railway.app/users/${parsedUserId}/contacts/${safeContactId}`, {
+                // URL ko API_BASE_URL se replace kar diya
+                await axios.delete(`${API_BASE_URL}/users/${parsedUserId}/contacts/${safeContactId}`, {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 
@@ -100,7 +115,8 @@ const ContactList = () => {
                 throw new TypeError("Invalid User ID for export");
             }
             
-            const response = await axios.get(`https://contact-manager-api-production-0aa6.up.railway.app/users/${parsedUserId}/contacts`, {
+            // URL ko API_BASE_URL se replace kar diya
+            const response = await axios.get(`${API_BASE_URL}/users/${parsedUserId}/contacts`, {
                 headers: { 'Authorization': `Bearer ${token}` },
                 params: {
                     page: 0,
@@ -118,9 +134,14 @@ const ContactList = () => {
             let csvContent = "Title,First Name,Last Name,Email,Phone\n";
             
             allContacts.forEach(contact => {
-                const email = contact.emails && contact.emails.length > 0 ? contact.emails[0].emailAddress : "";
-                const phone = contact.phones && contact.phones.length > 0 ? contact.phones[0].phoneNumber : "";
-                csvContent += `"${contact.title || ""}","${contact.firstName || ""}","${contact.lastName || ""}","${email}","${phone}"\n`;
+                // Har value ko export hone se pehle sanitize kiya ja raha hai
+                const title = sanitizeForCSV(contact.title);
+                const firstName = sanitizeForCSV(contact.firstName);
+                const lastName = sanitizeForCSV(contact.lastName);
+                const email = sanitizeForCSV(contact.emails && contact.emails.length > 0 ? contact.emails[0].emailAddress : "");
+                const phone = sanitizeForCSV(contact.phones && contact.phones.length > 0 ? contact.phones[0].phoneNumber : "");
+                
+                csvContent += `"${title}","${firstName}","${lastName}","${email}","${phone}"\n`;
             });
 
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -179,7 +200,8 @@ const ContactList = () => {
                     };
                     
                     try {
-                        await axios.post(`https://contact-manager-api-production-0aa6.up.railway.app/users/${parsedUserId}/contacts`, newContact, {
+                        // URL ko API_BASE_URL se replace kar diya
+                        await axios.post(`${API_BASE_URL}/users/${parsedUserId}/contacts`, newContact, {
                             headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' }
                         });
                         successCount++;
@@ -217,7 +239,6 @@ const ContactList = () => {
 
     return (
         <div className="container mt-5">
-
             <div className="d-flex flex-wrap justify-content-between align-items-center mb-4 p-4 bg-white shadow-sm rounded-4 border">
                 <div className="d-flex align-items-center mb-3 mb-md-0 gap-3">
                     <h3 className="text-primary fw-bold m-0" style={{ letterSpacing: '0.5px' }}>
