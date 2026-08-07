@@ -1,6 +1,7 @@
 package com.tenpearls.contact_manager.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,6 +25,7 @@ public class User {
 
     @Column(nullable = false)
     @JsonIgnore
+    @JsonProperty(access=JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
