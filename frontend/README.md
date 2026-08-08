@@ -1035,13 +1035,16 @@ Supports all modern browsers.
 # 📸 Application Screenshots
 
 ### Login
-![Login Screen](login.jpg)
+<img width="983" height="1189" alt="Screenshot_2026-08-08-06-25-05-79_99c04817c0de5652397fc8b56c3b3817" src="https://github.com/user-attachments/assets/4f254a11-26ac-4448-b026-d8a18f7a7228" />
+
 
 ### Register
-![Register Screen](register.jpg)
+<img width="1052" height="1354" alt="Screenshot_2026-08-08-06-25-55-16_99c04817c0de5652397fc8b56c3b3817" src="https://github.com/user-attachments/assets/1d93bf93-5b5c-438c-9dd9-71e6ee0aba84" />
+
 
 ### Dashboard
-![Dashboard Screen](dashboard.jpg)
+<img width="1080" height="512" alt="Screenshot_2026-08-08-06-29-31-15_40deb401b9ffe8e1df2f1cc5ba480b12" src="https://github.com/user-attachments/assets/02ccd857-4210-4b88-9430-a943695a3d48" />
+
 
 ---
 
